@@ -921,18 +921,19 @@ typedef struct {
 
 
 extern PIECE pieces[100];
+extern int score;
 
 
 
-enum {BLACKID=(256-9), CYANID, BLUEID, ORANGEID, YELLOWID, GREENID, PURPLEID, REDID, WHITEID};
-extern unsigned short colors[9];
+enum {BLACKID=(256-10), CYANID, BLUEID, ORANGEID, YELLOWID, GREENID, PURPLEID, REDID, WHITEID, GRAYID};
+extern unsigned short colors[10];
 
 
 void initGame();
 void updateGame();
 void drawGame();
 void initPieces();
-void drawPiece();
+void drawPiece(PIECE *);
 void updatePiece(PIECE *);
 # 6 "main.c" 2
 # 1 "bg.h" 1
@@ -978,6 +979,15 @@ unsigned short oldButtons;
 
 int seed;
 
+
+int frameCount;
+
+
+int score;
+
+char buffer1[41];
+char buffer2[41];
+
 int main() {
 
     initialize();
@@ -1021,11 +1031,21 @@ void initialize() {
 }
 
 void goToStart() {
+ unsigned short colors[10] = {0, ((0) | (31)<<5 | (31)<<10), ((0) | (0)<<5 | (31)<<10), ((31) | (11)<<5 | (0)<<10), ((31) | (31)<<5 | (0)<<10), ((0) | (31)<<5 | (0)<<10), ((23) | (0)<<5 | (31)<<10), ((31) | (0)<<5 | (0)<<10), ((31) | (31)<<5 | (31)<<10), ((15) | (15)<<5 | (15)<<10)};
+
     loadPalette(bgPal);
+
+    for (int i = 0; i < 10; i++) {
+        ((unsigned short *)0x5000000)[256-10 +i] = colors[i];
+    }
+
     drawFullscreenImage4(bgBitmap);
 
     waitForVBlank();
     flipPage();
+
+    drawFullscreenImage4(bgBitmap);
+    drawString4(76, 86, "Press Start", WHITEID);
 
 
 
@@ -1033,6 +1053,7 @@ void goToStart() {
 
 
     seed = 0;
+    frameCount = 1;
 }
 
 
@@ -1042,6 +1063,20 @@ void start() {
 
 
     waitForVBlank();
+
+    if (frameCount > 0) {
+        frameCount++;
+        if (frameCount > 120) {
+            flipPage();
+            frameCount = -1;
+        }
+    } else {
+        frameCount--;
+        if (frameCount < -120) {
+            flipPage();
+            frameCount = 1;
+        }
+    }
 
 
     if ((!(~(oldButtons)&((1<<3))) && (~buttons & ((1<<3))))) {
@@ -1063,9 +1098,15 @@ void goToGame() {
 
 void game() {
 
+    updateGame();
+    drawGame();
 
 
+    sprintf(buffer1, "Score: %d", score);
+    drawString4(32, 142, buffer1, WHITEID);
 
+    sprintf(buffer2, "Next:");
+    drawString4(42, 142, buffer2, WHITEID);
 
     waitForVBlank();
     flipPage();

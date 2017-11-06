@@ -32,6 +32,15 @@ unsigned short oldButtons;
 // Random Seed
 int seed;
 
+//counts frame by frame to flash image
+int frameCount;
+
+// score
+int score;
+
+char buffer1[41];
+char buffer2[41];
+
 int main() {
 
     initialize();
@@ -75,11 +84,21 @@ void initialize() {
 }
 
 void goToStart() {
+	unsigned short colors[NUMCOLORS] = {BLACK, CYAN, BLUE, ORANGE, YELLOW, GREEN, PURPLE, RED, WHITE, GRAY};
+
     loadPalette(bgPal);
+
+    for (int i = 0; i < NUMCOLORS; i++) {
+        PALETTE[256-NUMCOLORS+i] = colors[i];
+    }
+
     drawFullscreenImage4(bgBitmap);
 
     waitForVBlank();
     flipPage();
+
+    drawFullscreenImage4(bgBitmap);
+    drawString4(76, 86, "Press Start", WHITEID);
 
 
 
@@ -87,6 +106,7 @@ void goToStart() {
 
     // Begin the seed randomization
     seed = 0;
+    frameCount = 1;
 }
 
 // Runs every frame of the start state
@@ -96,6 +116,20 @@ void start() {
 
     // Lock the framerate to 60 fps
     waitForVBlank();
+
+    if (frameCount > 0) {
+        frameCount++;
+        if (frameCount > 120) {
+            flipPage();
+            frameCount = -1;
+        }
+    } else {
+        frameCount--;
+        if (frameCount < -120) {
+            flipPage();
+            frameCount = 1;
+        }
+    }
 
     // State transitions
     if (BUTTON_PRESSED(BUTTON_START)) {
@@ -117,9 +151,15 @@ void goToGame() {
 // Runs every frame of the game state
 void game() {
 
-    // // Update the score
-    // sprintf(buffer, "Balls Remaining: %d", ballsRemaining);
-    // drawString4(145, 5, buffer, WHITEID);
+    updateGame();
+    drawGame();
+
+    // Update the score
+    sprintf(buffer1, "Score: %d", score);
+    drawString4(32, 142, buffer1, WHITEID);
+    // Update next piece
+    sprintf(buffer2, "Next:");
+    drawString4(42, 142, buffer2, WHITEID);
 
     waitForVBlank();
     flipPage();
