@@ -111,7 +111,7 @@ void goToStart() {
 
 // Runs every frame of the start state
 void start() {
-
+	// frameCount = 1;
     seed++;
 
     // Lock the framerate to 60 fps
@@ -150,7 +150,7 @@ void goToGame() {
 
 // Runs every frame of the game state
 void game() {
-
+	
     updateGame();
     drawGame();
 
@@ -169,6 +169,8 @@ void game() {
         goToPause();
     else if (BUTTON_PRESSED(BUTTON_B))
         goToLose();
+
+    frameCount++;
 }
 
 // Sets up the pause state

@@ -5,21 +5,30 @@
 #include "bg.h"
 
 PIECE pieces[PIECECOUNT];
+PIECE displayedPiece;
+
+int frameCount = 1;
+int nextPiece;
 
 // Initialize the game
 void initGame() {
 	initPieces();
-	for (int i = 0; i < PIECECOUNT; i++) {
-		if (!(pieces[i].active)) {
-			pieces[i].active = 1;
-			break;
-		}
-	}
+	activatePieces();
 }
 
 void updateGame() {
 	for (int i = 0; i < PIECECOUNT; i++)
 		updatePiece(&pieces[i]);
+}
+
+void activatePieces() {
+	for (int i = 0; i < PIECECOUNT; i++) {
+		if (!(pieces[i].active)) {
+			pieces[i].active = 1;
+			nextPiece = pieces[i+1].pieceType;
+			break;
+		}
+	}
 }
 
 void drawGame() {
@@ -41,15 +50,15 @@ void initPieces() {
 		pieces[i].xLoc = rand()%8 * 6;
 		pieces[i].yLoc = 0;
 		pieces[i].pieceType = rand()%7 + 1;
-		pieces[i].rDel = 0;
+		pieces[i].rDel = 1;
 		pieces[i].active = 0;
 		switch(pieces[i].pieceType) {
 
 			case 1:
-				pieces[i].rect1Row = 0;
-				pieces[i].rect1Col = pieces[i].xLoc;
-				pieces[i].rect1Height = 6;
-				pieces[i].rect1Width = 24;
+				pieces[i].rect2Row = 0;
+				pieces[i].rect2Col = pieces[i].xLoc;
+				pieces[i].rect2Height = 6;
+				pieces[i].rect2Width = 24;
 			case 2:
 				pieces[i].rect1Row = 0;
 				pieces[i].rect1Col = pieces[i].xLoc;
@@ -71,8 +80,12 @@ void initPieces() {
 			case 4:
 				pieces[i].rect1Row = 0;
 				pieces[i].rect1Col = pieces[i].xLoc;
-				pieces[i].rect1Height = 12;
+				pieces[i].rect1Height = 6;
 				pieces[i].rect1Width = 12;
+				pieces[i].rect2Row = 6;
+				pieces[i].rect2Col = pieces[i].xLoc;
+				pieces[i].rect2Height = 6;
+				pieces[i].rect2Width = 12;
 			case 5:
 				pieces[i].rect1Row = 0;
 				pieces[i].rect1Col = pieces[i].xLoc + 6;
@@ -136,7 +149,12 @@ void drawPiece(PIECE* p) {
 }
 
 void updatePiece(PIECE* p) {
-	if (p->active) {
-		p->yLoc += .09375;
+	if (p->active && p->rDel) {
+		p->rect1Row += 6;
+		p->rect2Row += 6;
+	}
+
+	if (p->rect2Row >= 114)  {
+		p->rDel = 0;
 	}
 }

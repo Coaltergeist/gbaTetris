@@ -449,20 +449,24 @@ game:
 	beq	.L43
 .L41:
 	tst	r3, #2
-	beq	.L40
+	beq	.L42
 	ldr	r3, .L45+48
 	ldrh	r3, [r3, #0]
 	tst	r3, #2
 	beq	.L44
-.L40:
+.L42:
+	ldr	r3, .L45+52
+	ldr	r2, [r3, #0]
+	add	r2, r2, #1
+	str	r2, [r3, #0]
 	ldmfd	sp!, {r4, lr}
 	bx	lr
 .L44:
-	ldmfd	sp!, {r4, lr}
-	b	goToLose
+	bl	goToLose
+	b	.L42
 .L43:
-	ldmfd	sp!, {r4, lr}
-	b	goToPause
+	bl	goToPause
+	b	.L42
 .L46:
 	.align	2
 .L45:
@@ -479,6 +483,7 @@ game:
 	.word	flipPage
 	.word	oldButtons
 	.word	buttons
+	.word	frameCount
 	.size	game, .-game
 	.align	2
 	.global	lose
@@ -575,9 +580,9 @@ main:
 	.section	.rodata
 	.align	2
 	.set	.LANCHOR0,. + 0
-	.type	C.17.3365, %object
-	.size	C.17.3365, 20
-C.17.3365:
+	.type	C.19.3377, %object
+	.size	C.19.3377, 20
+C.19.3377:
 	.short	0
 	.short	32736
 	.short	31744

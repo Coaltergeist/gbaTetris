@@ -32,3 +32,4 @@ void drawGame();
 void initPieces();
 void drawPiece(PIECE *);
 void updatePiece(PIECE *);
+void activatePieces();

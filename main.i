@@ -914,7 +914,17 @@ void drawString4(int row, int col, char *str, unsigned char colorIndex);
 typedef struct {
  int pieceType;
  int xLoc;
+ int yLoc;
  int rDel;
+ int active;
+ int rect1Row;
+ int rect1Col;
+ int rect1Height;
+ int rect1Width;
+ int rect2Row;
+ int rect2Col;
+ int rect2Height;
+ int rect2Width;
 } PIECE;
 
 
@@ -1116,6 +1126,8 @@ void game() {
         goToPause();
     else if ((!(~(oldButtons)&((1<<1))) && (~buttons & ((1<<1)))))
         goToLose();
+
+    frameCount++;
 }
 
 
