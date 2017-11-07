@@ -9,6 +9,12 @@ PIECE pieces[PIECECOUNT];
 // Initialize the game
 void initGame() {
 	initPieces();
+	for (int i = 0; i < PIECECOUNT; i++) {
+		if (!(pieces[i].active)) {
+			pieces[i].active = 1;
+			break;
+		}
+	}
 }
 
 void updateGame() {
@@ -25,11 +31,15 @@ void drawGame() {
 
     drawRect4(24, 134, 72, 78, GRAYID);
     drawRect4(30, 140, 60, 66, BLACKID);
+
+    for (int i = 0; i < PIECECOUNT; i++)
+    	drawPiece(&pieces[i]);
 }
 
 void initPieces() {
 	for (int i = 0; i < PIECECOUNT; i++) {
-		pieces[i].xLoc = rand()%10;
+		pieces[i].xLoc = rand()%8 * 6;
+		pieces[i].yLoc = 0;
 		pieces[i].pieceType = rand()%7 + 1;
 		pieces[i].rDel = 0;
 		pieces[i].active = 0;
@@ -96,6 +106,8 @@ void initPieces() {
 
 void drawPiece(PIECE* p) {
 	u8 color;
+	int x = p->xLoc % 6;
+	int y = p->yLoc % 6;
 	switch(p->pieceType) {
 
 		case 1:
@@ -114,15 +126,17 @@ void drawPiece(PIECE* p) {
 			color = REDID;
 	}
 
-	if (p->active) {
-		drawRect4(p->rect1Row, p->rect1Col, p->rect1Height, p->rect1Width, color);
-		drawRect4(p->rect2Row, p->rect2Col, p->rect2Height, p->rect2Width, color);
+	if ((!x) && (!y)) {
+		if (p->active) {
+			drawRect4(p->rect1Row + 20, p->rect1Col + 50, p->rect1Height, p->rect1Width, color);
+			drawRect4(p->rect2Row + 20, p->rect2Col + 50, p->rect2Height, p->rect2Width, color);
+		}
 	}
 
 }
 
 void updatePiece(PIECE* p) {
 	if (p->active) {
-
+		p->yLoc += .09375;
 	}
 }

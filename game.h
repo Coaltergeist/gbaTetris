@@ -1,6 +1,7 @@
 typedef struct {
 	int pieceType;
 	int xLoc;
+	int yLoc;
 	int rDel;
 	int active;
 	int rect1Row;
